@@ -1,0 +1,464 @@
+<!--HTML CODE-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Library Management System</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <div id="loginPage">
+      <h2>Login</h2>
+      <form onsubmit="authenticate(event)">
+        <div>
+          <label for="username">Username:</label>
+          <input type="text" id="username" required />
+        </div>
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" required />
+        </div>
+        <button type="submit">Login</button>
+        <p id="loginError" class="error-message"></p>
+      </form>
+    </div>
+
+    <div id="homePage" style="display: none">
+      <h1>LIBRARY MANAGEMENT SYSTEM</h1>
+      <div class="book-window">
+        <h2>AVAILABLE BOOKS</h2>
+        <ul id="bookList"></ul>
+      </div>
+      <div class="options">
+        <button onclick="goToAddBook()">ADD BOOK</button>
+        <button onclick="goToSearchBook()">SEARCH BOOK</button>
+      </div>
+    </div>
+
+    <div id="addBookPage" style="display: none">
+      <h1>ADD BOOK</h1>
+      <form id="addBookForm" onsubmit="addBook(event)">
+        <div>
+          <label for="title">Title:</label>
+          <input type="text" id="title" required />
+        </div>
+        <div>
+          <label for="author">Author:</label>
+          <input type="text" id="author" required />
+        </div>
+        <div>
+          <label for="subject">Subject:</label>
+          <input type="text" id="subject" required />
+        </div>
+        <div>
+          <label for="publication">Date of Publication:</label>
+          <input type="date" id="publication" required />
+        </div>
+        <div>
+          <label for="pages">Number of Pages:</label>
+          <input type="number" id="pages" required />
+        </div>
+        <div class="options">
+          <button type="submit">ADD BOOK</button>
+          <button onclick="goToHomePage()">HOMEPAGE</button>
+        </div>
+        <p id="addBookMessage" class="success-message"></p>
+      </form>
+    </div>
+
+    <div id="searchBookPage" style="display: none">
+      <h1>Search Book</h1>
+      <div id="searchFilters">
+        <label for="searchTitle">Title:</label>
+        <input type="text" id="searchTitle" />
+
+        <label for="searchAuthor">Author:</label>
+        <input type="text" id="searchAuthor" />
+
+        <label for="searchSubject">Subject:</label>
+        <input type="text" id="searchSubject" />
+
+        <label for="searchPublication">Date of Publication:</label>
+        <input type="date" id="searchPublication" />
+
+        <label for="searchPages">Number of Pages:</label>
+        <input type="number" id="searchPages" />
+      </div>
+      <div class="options">
+        <button onclick="searchBooks()">SEARCH</button>
+        <button onclick="goToHomePage()">HOMEPAGE</button>
+      </div>
+      <p id="searchError" class="error-message"></p>
+      <ul id="searchResults"></ul>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
+<!--CSS CODE:-->
+<style>
+  /* Global styles */
+
+  body {
+    background-color: #919191;
+    font-family: Arial, sans-serif;
+    background-image: url("images/ryunosuke-kikuno-FKqxZ58bVjU-unsplash.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Login page */
+  #loginPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: hsl(200, 2%, 75%);
+  }
+
+  #loginPage h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  #loginPage form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #loginPage label {
+    font-size: 18px;
+  }
+
+  #loginPage input[type="text"],
+  #loginPage input[type="password"] {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    width: 200px;
+  }
+
+  #loginPage button[type="submit"] {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #loginPage button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+
+  #loginError {
+    color: red;
+    margin-top: 10px;
+  }
+
+  /* Home page */
+  #homePage {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  #homePage h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  .book-window {
+    background-color: #f8f8f8;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  #bookList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  #bookList li {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .options {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .options button {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  .options button:hover {
+    background-color: #45a049;
+  }
+
+  /* Add book page */
+  #addBookPage {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  #addBookPage h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  #addBookForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #addBookForm label {
+    font-size: 18px;
+  }
+
+  #addBookForm input[type="text"],
+  #addBookForm input[type="number"] {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    width: 200px;
+  }
+
+  #addBookForm button[type="submit"] {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #addBookForm button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+
+  #addBookMessage {
+    color: green;
+    margin-top: 10px;
+  }
+
+  /* Search book page */
+  #searchBookPage {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  #searchBookPage h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  #searchForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #searchForm label {
+    font-size: 18px;
+  }
+
+  #searchForm input[type="text"],
+  #searchForm input[type="number"] {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    width: 200px;
+  }
+
+  #searchForm button[type="submit"] {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #searchForm button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+
+  #errorMessage {
+    color: red;
+    margin-top: 10px;
+  }
+
+  /* General styles */
+  .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+
+  .success-message {
+    color: green;
+  }
+</style>
+
+<!-- JAVASCRIPT CODE-->
+
+<script>
+  // Array to store books
+  let books = [];
+
+  // Function to authenticate user
+  function authenticate(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    // Perform authentication logic here
+    if (username === "admin" && password === "password") {
+      // Show the home page
+      document.getElementById("loginPage").style.display = "none";
+      document.getElementById("homePage").style.display = "block";
+      displayBooks();
+    } else {
+      document.getElementById("loginError").textContent =
+        "Invalid username or password. Please try again.";
+    }
+  }
+
+  // Function to add a book
+  function addBook(event) {
+    event.preventDefault();
+
+    const title = document.getElementById("title").value;
+    const author = document.getElementById("author").value;
+    const subject = document.getElementById("subject").value;
+    const publication = document.getElementById("publication").value;
+    const pages = document.getElementById("pages").value;
+
+    const book = { title, author, subject, publication, pages };
+    books.push(book);
+
+    displayBooks();
+
+    // Clear form fields
+    document.getElementById("title").value = "";
+    document.getElementById("author").value = "";
+    document.getElementById("subject").value = "";
+    document.getElementById("publication").value = "";
+    document.getElementById("pages").value = "";
+
+    document.getElementById("addBookMessage").textContent =
+      "Book added successfully.";
+  }
+
+  // Function to display books in the list
+  function displayBooks() {
+    const bookList = document.getElementById("bookList");
+    bookList.innerHTML = "";
+
+    books.forEach((book) => {
+      const li = document.createElement("li");
+      li.textContent = `Title: ${book.title}, Author: ${book.author}, Subject: ${book.subject}, Publication: ${book.publication}, Pages: ${book.pages}`;
+      bookList.appendChild(li);
+    });
+  }
+
+  // Function to go to add book page
+  function goToAddBook() {
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("addBookPage").style.display = "block";
+  }
+
+  // Function to go to search book page
+  function goToSearchBook() {
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("searchBookPage").style.display = "block";
+  }
+
+  // Function to go back to home page
+  function goToHomePage() {
+    document.getElementById("addBookPage").style.display = "none";
+    document.getElementById("searchBookPage").style.display = "none";
+    document.getElementById("homePage").style.display = "block";
+  }
+
+  // Function to search books
+  function searchBooks() {
+    const searchTitle = document
+      .getElementById("searchTitle")
+      .value.toLowerCase();
+    const searchAuthor = document
+      .getElementById("searchAuthor")
+      .value.toLowerCase();
+    const searchSubject = document
+      .getElementById("searchSubject")
+      .value.toLowerCase();
+    const searchPublication =
+      document.getElementById("searchPublication").value;
+    const searchPages = document.getElementById("searchPages").value;
+
+    const filteredBooks = books.filter((book) => {
+      return (
+        book.title.toLowerCase().includes(searchTitle) &&
+        book.author.toLowerCase().includes(searchAuthor) &&
+        book.subject.toLowerCase().includes(searchSubject) &&
+        book.publication.includes(searchPublication) &&
+        book.pages.includes(searchPages)
+      );
+    });
+
+    const searchResults = document.getElementById("searchResults");
+    searchResults.innerHTML = "";
+
+    if (filteredBooks.length === 0) {
+      document.getElementById("searchError").textContent =
+        "No matching books found.";
+    } else {
+      filteredBooks.forEach((book) => {
+        const li = document.createElement("li");
+        li.textContent = `Title: ${book.title}, Author: ${book.author}, Subject: ${book.subject}, Publication: ${book.publication}, Pages: ${book.pages}`;
+        searchResults.appendChild(li);
+      });
+
+      document.getElementById("searchError").textContent = "";
+    }
+  }
+</script>
